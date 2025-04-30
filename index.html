@@ -168,44 +168,54 @@
   </div>
 
   <script>
-    // Navigation des étapes
-    const steps = document.querySelectorAll('.form-step');
-    let currentStep = 0;
-    function nextStep() {
-      if (currentStep < steps.length - 1) {
-        steps[currentStep].classList.remove('active');
-        currentStep++;
-        steps[currentStep].classList.add('active');
-      }
+  const SHEETY_ENDPOINT = 'https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses';
+
+  // Navigation des étapes
+  const steps = document.querySelectorAll('.form-step');
+  let currentStep = 0;
+  function nextStep() {
+    if (currentStep < steps.length - 1) {
+      steps[currentStep].classList.remove('active');
+      currentStep++;
+      steps[currentStep].classList.add('active');
     }
+  }
 
-    // Envoi des données à Sheety
-    document.getElementById('ugcForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = {};
-      new FormData(form).forEach((value, key) => data[key] = value);
+  // Soumission AJAX vers Sheety
+  document.getElementById('ugcForm').addEventListener('submit', function(e) {
+    e.preventDefault();                    // n’envoie pas le form « classique »
+    const form = e.target;
+    const data = {};
+    new FormData(form).forEach((v, k) => { data[k] = v; });
 
-      fetch('https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ response: data })
-      })
-      .then(r => r.json())
-      .then(() => {
-        alert('Thank you! Your application has been submitted.');
-        form.reset();
-        // éventuellement revenir à la première étape
-        steps[currentStep].classList.remove('active');
-        currentStep = 0;
-        steps[0].classList.add('active');
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Oops! Something went wrong.');
-      });
+    console.log('→ Sending to Sheety:', data);
+
+    fetch(SHEETY_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ response: data })
+    })
+    .then(res => {
+      console.log('Sheety raw response:', res);
+      return res.json();
+    })
+    .then(json => {
+      console.log('Sheety parsed JSON:', json);
+      if (json.error) throw json.error;
+      // Feedback utilisateur
+      alert('✅ Thanks! Your application has been submitted.');
+      form.reset();
+      // Revenir à la première étape
+      steps[currentStep].classList.remove('active');
+      currentStep = 0;
+      steps[0].classList.add('active');
+    })
+    .catch(err => {
+      console.error('❌ Error posting to Sheety:', err);
+      alert('Oops! Something went wrong. Check console for details.');
     });
-  </script>
+  });
+</script>
 
 </body>
 </html>
