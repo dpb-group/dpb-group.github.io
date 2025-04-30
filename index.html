@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UGC Creator Application</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-step {
+      display: none;
+      flex-direction: column;
+    }
+
+    .form-step.active {
+      display: flex;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+
+    input, select, textarea {
+      padding: 10px;
+      font-size: 1rem;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .btn {
+      background: #007bff;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      gap: 10px;
+    }
+
+    .checkbox-wrap label {
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-wrapper">
+    <form id="ugcForm">
+
+      <!-- Step 1 -->
+      <div class="form-step active">
+        <h2>What's your full name?</h2>
+        <input type="text" name="name" required>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="form-step">
+        <h2>Email address</h2>
+        <input type="email" name="email" required>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="form-step">
+        <h2>Where are you based?</h2>
+        <input type="text" name="location" placeholder="City & Country">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="form-step">
+        <h2>How old are you?</h2>
+        <select name="age" required>
+          <option value="">Select</option>
+          <option>Under 18</option>
+          <option>18–24</option>
+          <option>25–34</option>
+          <option>35–44</option>
+          <option>45+</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="form-step">
+        <h2>Instagram Handle</h2>
+        <input type="text" name="instagram">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="form-step">
+        <h2>TikTok Handle</h2>
+        <input type="text" name="tiktok">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="form-step">
+        <h2>Portfolio Link</h2>
+        <input type="text" name="portfolio" placeholder="Drive, TikTok, etc.">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 8 -->
+      <div class="form-step">
+        <h2>Preferred UGC Type</h2>
+        <select name="ugc_type">
+          <option>Unboxing</option>
+          <option>Voice-over</option>
+          <option>Talking Head</option>
+          <option>Vlog</option>
+          <option>ASMR</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 9 -->
+      <div class="form-step">
+        <h2>What device do you use?</h2>
+        <input type="text" name="device">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 10 -->
+      <div class="form-step">
+        <h2>Have you created UGC before?</h2>
+        <select name="experience">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 11 -->
+      <div class="form-step">
+        <h2>Brands you've worked with (optional)</h2>
+        <textarea name="brands" rows="2"></textarea>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 12 -->
+      <div class="form-step">
+        <h2>Do you have a fixed rate per video?</h2>
+        <select name="rate">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 13 -->
+      <div class="form-step">
+        <h2>Your typical rate (optional)</h2>
+        <input type="text" name="rate_value">
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 14 -->
+      <div class="form-step">
+        <h2>Are you open to monthly deals?</h2>
+        <select name="monthly">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 15 -->
+      <div class="form-step">
+        <h2>Comfortable with briefs/scripts?</h2>
+        <select name="briefs">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <button class="btn" type="button" onclick="nextStep()">Next</button>
+      </div>
+
+      <!-- Step 16 -->
+      <div class="form-step">
+        <label><input type="checkbox" required> I agree to share my data for UGC opportunities.</label>
+        <button class="btn" type="submit">Submit Application</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    const steps = document.querySelectorAll('.form-step');
+    let currentStep = 0;
+
+    function nextStep() {
+      if (currentStep < steps.length - 1) {
+        steps[currentStep].classList.remove('active');
+        currentStep++;
+        steps[currentStep].classList.add('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
