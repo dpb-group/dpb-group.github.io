@@ -186,7 +186,7 @@
       const data = {};
       new FormData(form).forEach((value, key) => data[key] = value);
 
-      fetch('https://api.sheety.co/XXXXXXXXXX/UGCCreatorApplications/responses', {
+      fetch('https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ response: data })
