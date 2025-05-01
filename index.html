@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>UGC Creator Application</title>
   <style>
     * { box-sizing: border-box; }
@@ -11,201 +11,271 @@
       background: #f4f4f4;
       margin: 0; padding: 0;
       display: flex; align-items: center; justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
     }
-    .form-wrapper {
-      width: 100%; max-width: 500px;
+    .container {
       background: #fff; padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border-radius: 10px; max-width: 480px; width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
-    .form-step { display: none; flex-direction: column; }
-    .form-step.active { display: flex; }
-    h2 { margin-bottom: 10px; font-size: 1.4rem; }
+    h1 { text-align: center; margin-bottom: 10px; }
+    p { text-align: center; color: #555; margin-bottom: 20px; }
+    .step {
+      display: none; flex-direction: column; animation: fadeIn .3s;
+    }
+    .step.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    label { margin-top: 15px; font-weight: 600; }
     input, select, textarea {
-      padding: 10px; font-size: 1rem;
-      margin: 8px 0 20px; border: 1px solid #ccc;
-      border-radius: 6px; width: 100%;
+      margin-top: 5px; padding: 10px; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 6px; width: 100%;
+    }
+    textarea { resize: vertical; }
+    .buttons {
+      display: flex; justify-content: space-between;
+      margin-top: 20px;
     }
     .btn {
-      background: #007bff; color: #fff; padding: 12px;
-      border: none; width: 100%; border-radius: 6px;
-      font-size: 1rem; cursor:pointer;
+      padding: 12px 20px; font-size: 1rem;
+      border: none; border-radius: 6px; cursor: pointer;
     }
-    .btn:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-next {
+      background: #007bff; color: #fff;
+    }
+    .btn-prev {
+      background: #6c757d; color: #fff;
+    }
+    .btn-submit {
+      background: #28a745; color: #fff; width: 100%;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status {
+      text-align: center; margin-top: 15px; height: 1.2em;
+      color: #e74c3c; /* error red */ 
+    }
+    .status.success { color: #28a745; }
+    .loader {
+      border: 4px solid #f3f3f3; border-top: 4px solid #007bff;
+      border-radius: 50%; width: 24px; height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block; vertical-align: middle;
+      margin-left: 10px; visibility: hidden;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg) } }
   </style>
 </head>
 <body>
 
-  <div class="form-wrapper">
-    <form id="ugcForm">
-      <!-- Step 1 -->
-      <div class="form-step active">
-        <h2>What's your full name?</h2>
-        <input type="text" name="name" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 2 -->
-      <div class="form-step">
-        <h2>Email address</h2>
-        <input type="email" name="email" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 3 -->
-      <div class="form-step">
-        <h2>Where are you based?</h2>
-        <input type="text" name="location" placeholder="City & Country" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 4 -->
-      <div class="form-step">
-        <h2>How old are you?</h2>
-        <select name="age" required>
-          <option value="">Select</option>
-          <option>Under 18</option>
-          <option>18–24</option>
-          <option>25–34</option>
-          <option>35–44</option>
-          <option>45+</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 5 -->
-      <div class="form-step">
-        <h2>Instagram Handle</h2>
-        <input type="text" name="instagram" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 6 -->
-      <div class="form-step">
-        <h2>TikTok Handle</h2>
-        <input type="text" name="tiktok" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 7 -->
-      <div class="form-step">
-        <h2>Portfolio Link</h2>
-        <input type="text" name="portfolio" placeholder="Drive, TikTok, etc." required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 8 -->
-      <div class="form-step">
-        <h2>Preferred UGC Type</h2>
-        <select name="ugc_type" required>
-          <option value="">Select</option>
-          <option>Unboxing</option>
-          <option>Voice-over</option>
-          <option>Talking Head</option>
-          <option>Vlog</option>
-          <option>ASMR</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 9 -->
-      <div class="form-step">
-        <h2>What device do you use?</h2>
-        <input type="text" name="device" required>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 10 -->
-      <div class="form-step">
-        <h2>Have you created UGC before?</h2>
-        <select name="experience" required>
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 11 -->
-      <div class="form-step">
-        <h2>Brands you've worked with (optional)</h2>
-        <textarea name="brands" rows="2"></textarea>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 12 -->
-      <div class="form-step">
-        <h2>Do you have a fixed rate per video?</h2>
-        <select name="rate" required>
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 13 -->
-      <div class="form-step">
-        <h2>Your typical rate (optional)</h2>
-        <input type="text" name="rate_info">
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 14 -->
-      <div class="form-step">
-        <h2>Are you open to monthly deals?</h2>
-        <select name="ongoing" required>
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 15 -->
-      <div class="form-step">
-        <h2>Comfortable with briefs/scripts?</h2>
-        <select name="briefs" required>
-          <option value="">Select</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-        <button class="btn" type="button" onclick="nextStep()">Next</button>
-      </div>
-      <!-- Step 16 -->
-      <div class="form-step">
-        <label><input type="checkbox" name="consent" required> I agree to share my data for UGC opportunities.</label>
-        <button class="btn" type="submit">Submit Application</button>
-      </div>
-    </form>
-  </div>
+<div class="container">
+  <h1>Join Our UGC Creator Network</h1>
+  <p>Quick multi-step form to apply for paid campaigns.</p>
+  <div id="status" class="status"></div>
+  <form id="ugcForm">
 
+    <!-- Step 1 -->
+    <div class="step active" data-step="1">
+      <label for="name">Full Name *</label>
+      <input id="name" name="name" type="text" required>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" data-step="2">
+      <label for="email">Email Address *</label>
+      <input id="email" name="email" type="email" required>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step" data-step="3">
+      <label for="location">Location (City & Country) *</label>
+      <input id="location" name="location" type="text" required>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step" data-step="4">
+      <label for="age">Age Range *</label>
+      <select id="age" name="age" required>
+        <option value="">Select</option>
+        <option>Under 18</option>
+        <option>18–24</option>
+        <option>25–34</option>
+        <option>35–44</option>
+        <option>45+</option>
+      </select>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step" data-step="5">
+      <label for="instagram">Instagram Handle *</label>
+      <input id="instagram" name="instagram" type="text" required>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step" data-step="6">
+      <label for="tiktok">TikTok Handle *</label>
+      <input id="tiktok" name="tiktok" type="text" required>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step" data-step="7">
+      <label for="portfolio">Portfolio Link *</label>
+      <input id="portfolio" name="portfolio" type="url" placeholder="https://..." required>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step" data-step="8">
+      <label for="ugcType">Preferred UGC Type *</label>
+      <select id="ugcType" name="ugcType" required>
+        <option value="">Select</option>
+        <option>Unboxing</option>
+        <option>Voice-over</option>
+        <option>Talking Head</option>
+        <option>Tutorial</option>
+        <option>Vlog</option>
+        <option>ASMR</option>
+      </select>
+    </div>
+
+    <!-- Step 9 -->
+    <div class="step" data-step="9">
+      <label for="device">Device Used *</label>
+      <input id="device" name="device" type="text" required>
+    </div>
+
+    <!-- Step 10 -->
+    <div class="step" data-step="10">
+      <label for="experience">Have you created UGC before? *</label>
+      <select id="experience" name="experience" required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+
+    <!-- Step 11 -->
+    <div class="step" data-step="11">
+      <label for="brands">Brands worked with (optional)</label>
+      <textarea id="brands" name="brands" rows="2"></textarea>
+    </div>
+
+    <!-- Step 12 -->
+    <div class="step" data-step="12">
+      <label for="fixedRate">Do you have a fixed rate per video? *</label>
+      <select id="fixedRate" name="fixedRate" required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+
+    <!-- Step 13 -->
+    <div class="step" data-step="13">
+      <label for="rateInfo">Typical rate (optional)</label>
+      <input id="rateInfo" name="rateInfo" type="text" placeholder="$...">
+    </div>
+
+    <!-- Step 14 -->
+    <div class="step" data-step="14">
+      <label for="ongoing">Open to monthly deals? *</label>
+      <select id="ongoing" name="ongoing" required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+
+    <!-- Step 15 -->
+    <div class="step" data-step="15">
+      <label for="briefs">Comfortable with briefs/scripts? *</label>
+      <select id="briefs" name="briefs" required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="buttons">
+      <button type="button" class="btn btn-prev" id="prevBtn">Previous</button>
+      <button type="button" class="btn btn-next" id="nextBtn">Next</button>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-submit" id="submitBtn" style="display:none">
+      Submit Application
+      <span class="loader" id="loader"></span>
+    </button>
+  </form>
+</div>
+
+<script>
+(async function(){
+  const form = document.getElementById('ugcForm');
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const loader = document.getElementById('loader');
+  const statusDiv = document.getElementById('status');
+  const SHEETY = 'https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses';
   
-  <script>
-    const SHEETY_ENDPOINT = 'https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses';
-    const steps = document.querySelectorAll('.form-step');
-    let currentStep = 0;
-
-    function nextStep() {
-      if (currentStep < steps.length - 1) {
-        steps[currentStep].classList.remove('active');
-        currentStep++;
-        steps[currentStep].classList.add('active');
-      }
+  let current = 0;
+  showStep(current);
+  
+  function showStep(n) {
+    steps.forEach((s,i)=> s.classList.toggle('active', i===n));
+    prevBtn.style.display = n===0 ? 'none' : 'inline-block';
+    nextBtn.style.display = n===steps.length-1 ? 'none' : 'inline-block';
+    submitBtn.style.display = n===steps.length-1 ? 'inline-block' : 'none';
+    statusDiv.textContent = '';
+  }
+  
+  nextBtn.addEventListener('click',()=>{
+    const input = steps[current].querySelector('input,select,textarea');
+    if (input && !input.checkValidity()) {
+      input.reportValidity();
+      return;
     }
-
-    document.getElementById('ugcForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const form = e.target;
-      const data = {};
-      new FormData(form).forEach((value, key) => data[key] = value);
-
-      // Send to Sheety
-      fetch(SHEETY_ENDPOINT, {
+    current++;
+    showStep(current);
+  });
+  
+  prevBtn.addEventListener('click',()=>{
+    current--;
+    showStep(current);
+  });
+  
+  form.addEventListener('submit', async e=> {
+    e.preventDefault();
+    statusDiv.textContent = '';
+    loader.style.visibility = 'visible';
+    submitBtn.disabled = true;
+    
+    const data = {};
+    new FormData(form).forEach((v,k)=> data[k]=v);
+    
+    try {
+      const res = await fetch(SHEETY, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers:{ 'Content-Type':'application/json' },
         body: JSON.stringify({ response: data })
-      })
-      .catch(err => console.error('Sheety error:', err))
-      .finally(() => {
-        // Always show thank-you message
-        alert('Thank you! Your application has been submitted.');
-        form.reset();
-        // Return to first step
-        steps[currentStep].classList.remove('active');
-        currentStep = 0;
-        steps[0].classList.add('active');
       });
-    });
-  </script>
-
-
-</body>
-</html>
+      const json = await res.json();
+      if (!res.ok || json.error) {
+        throw new Error(json.error || res.statusText);
+      }
+      statusDiv.className = 'status success';
+      statusDiv.textContent = '✅ Application submitted successfully!';
+      form.reset();
+      current = 0;
+      showStep(current);
+    } catch (err) {
+      console.error('Submission error:', err);
+      statusDiv.className = 'status';
+      statusDiv.textContent = '❌ Submission failed. Please try again.';
+    } finally {
+      loader.style.visibility = 'hidden';
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
