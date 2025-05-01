@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UGC Creator Application</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff; padding: 30px;
+      border-radius: 10px; max-width: 480px; width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    h1, p { text-align: center; }
+    .step {
+      display: none; flex-direction: column;
+    }
+    .step.active { display: flex; }
+    label { margin-top: 15px; font-weight: 600; }
+    input, select, textarea {
+      margin-top: 5px; padding: 10px; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 6px; width: 100%;
+    }
+    .buttons {
+      display: flex; justify-content: space-between;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 20px; font-size: 1rem;
+      border: none; border-radius: 6px; cursor: pointer;
+    }
+    .btn-next { background: #007bff; color: #fff; }
+    .btn-prev { background: #6c757d; color: #fff; }
+    .btn-submit {
+      background: #28a745; color: #fff;
+      width: 100%; margin-top: 20px;
+    }
+    .status {
+      text-align: center; margin-top: 15px;
+      color: #e74c3c;
+    }
+    .status.success { color: #28a745; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Join Our UGC Creator Network</h1>
+  <p>Apply in just a few steps</p>
+  <div id="status" class="status"></div>
+  <form id="ugcForm">
+
+    <div class="step active"><label>Name*</label><input name="name" required></div>
+    <div class="step"><label>Email*</label><input type="email" name="email" required></div>
+    <div class="step"><label>Location*</label><input name="location" required></div>
+    <div class="step"><label>Age*</label>
+      <select name="age" required>
+        <option value="">Select</option><option>18–24</option><option>25–34</option><option>35–44</option><option>45+</option>
+      </select>
+    </div>
+    <div class="step"><label>Instagram*</label><input name="instagram" required></div>
+    <div class="step"><label>TikTok*</label><input name="tiktok" required></div>
+    <div class="step"><label>Portfolio*</label><input name="portfolio" required></div>
+    <div class="step"><label>UGC Type*</label>
+      <select name="ugcType" required>
+        <option value="">Select</option><option>Unboxing</option><option>Voice-over</option><option>Talking Head</option>
+        <option>Vlog</option><option>ASMR</option>
+      </select>
+    </div>
+    <div class="step"><label>Device*</label><input name="device" required></div>
+    <div class="step"><label>Experience*</label>
+      <select name="experience" required>
+        <option value="">Select</option><option>Yes</option><option>No</option>
+      </select>
+    </div>
+    <div class="step"><label>Brands (optional)</label><textarea name="brands"></textarea></div>
+    <div class="step"><label>Fixed Rate?*</label>
+      <select name="fixedRate" required>
+        <option value="">Select</option><option>Yes</option><option>No</option>
+      </select>
+    </div>
+    <div class="step"><label>Rate Info (optional)</label><input name="rateInfo"></div>
+    <div class="step"><label>Ongoing Deals?*</label>
+      <select name="ongoing" required>
+        <option value="">Select</option><option>Yes</option><option>No</option>
+      </select>
+    </div>
+    <div class="step"><label>Briefs OK?*</label>
+      <select name="briefs" required>
+        <option value="">Select</option><option>Yes</option><option>No</option>
+      </select>
+    </div>
+
+    <div class="buttons">
+      <button type="button" class="btn btn-prev" id="prevBtn">Previous</button>
+      <button type="button" class="btn btn-next" id="nextBtn">Next</button>
+    </div>
+
+    <button type="submit" class="btn btn-submit" id="submitBtn" style="display:none">Submit Application</button>
+  </form>
+</div>
+
+<script>
+  (function(){
+    const form = document.getElementById('ugcForm');
+    const steps = document.querySelectorAll('.step');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusDiv = document.getElementById('status');
+    const SHEETY = 'https://api.sheety.co/1976530857084fe7c6703ceb7c8f332c/ugcCreatorApplications/responses';
+
+    let current = 0;
+    function showStep(n){
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', i === n);
+      });
+      prevBtn.style.display = n === 0 ? 'none' : 'inline-block';
+      nextBtn.style.display = n === steps.length - 1 ? 'none' : 'inline-block';
+      submitBtn.style.display = n === steps.length - 1 ? 'inline-block' : 'none';
+      statusDiv.textContent = '';
+    }
+
+    nextBtn.onclick = () => {
+      const input = steps[current].querySelector('input, select, textarea');
+      if (input && !input.checkValidity()) {
+        input.reportValidity();
+        return;
+      }
+      current++;
+      showStep(current);
+    };
+
+    prevBtn.onclick = () => {
+      current--;
+      showStep(current);
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {};
+      new FormData(form).forEach((v, k) => data[k] = v);
+      try {
+        const res = await fetch(SHEETY, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ response: data })
+        });
+        const json = await res.json();
+        if (!res.ok || json.error) throw new Error(json.error || 'Failed');
+        statusDiv.textContent = '✅ Application submitted!';
+        statusDiv.className = 'status success';
+        form.reset();
+        current = 0;
+        showStep(current);
+      } catch (err) {
+        console.error('Submit error:', err);
+        statusDiv.textContent = '❌ Submission failed.';
+        statusDiv.className = 'status';
+      }
+    };
+
+    showStep(current);
+  })();
+</script>
+
+</body>
+</html>
